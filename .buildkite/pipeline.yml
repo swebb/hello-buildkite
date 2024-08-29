@@ -1,0 +1,19 @@
+steps:
+  - key: "build"
+    label: ":hammer_and_wrench: Build"
+    command: rake
+    artifact_paths: "*.deb"
+
+  - block: ":ubuntu: Publish {{release}}"
+    depends_on: "build"
+    plugins:
+      - buildkite-plugins/publish-to-packages#main:
+          artifacts: "*.deb"
+          registry: "steve-playground/{{release}}"
+    matrix:
+      setup:
+        release:
+          - "edge"
+          - "testing"
+          - "stable"
+          - "lts"
